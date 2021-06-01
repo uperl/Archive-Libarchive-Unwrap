@@ -17,15 +17,36 @@ use experimental qw( signatures );
 
 =head1 DESCRIPTION
 
+This module will unwrap one or more nested filter formats supported by L<Archive::Libarchive>.  The detection
+logic for L<Archive::Libarchive> is such that you typically do not need to tell it which formats are a file
+is stored using.  The filter formats include traditional compression formats like gzip, bzip2, but also includes
+other encodings like uuencode.  The idea of this module is to just point it to a file and it will do its best
+to decode it until you get to the inner file.
+
 =head1 CONSTRUCTOR
 
 =head2 new
+
+ my $uw = Archive::Libarchive::Unwrap->new(%options);
+
+This creates a new instance of the Unwrap class.  At least one of the C<filename> and C<memory> options are
+required.
 
 =over 4
 
 =item filename
 
+ my $uw = Archive::Libarchive::Unwrap->new( filename => $filename );
+
+This will create an Unwrap instance that will read from the given C<$filename>.
+
 =item memory
+
+ my $uw = Archive::Libarchive::Unwrap->new( memory => $memory );
+ my $uw = Archive::Libarchive::Unwrap->new( memory => \$memory );
+
+This will create an Unwrap instance that will read from memory.  You may pass in either a scalar containing
+the raw wrapped data, or a scalar reference to the same.
 
 =back
 
@@ -53,6 +74,12 @@ sub new ($class, %options)
 =head1 METHODS
 
 =head2 unwrap
+
+ my $content = $uw->unwrap;
+
+This will return the raw content of the unfiltered file.  This will decompress and/or filter multiple
+filters, so if you had a text file that was gzipped and uuencoded C<hello.txt.gz.uu>, this method will
+return the content of the inner text file C<hello.txt>.
 
 =cut
 
@@ -110,3 +137,24 @@ sub _diag ($self, $r, $ret)
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<Archive::Libarchive::Peek>
+
+An interface for peeking into archives without extracting them to the local filesystem.
+
+=item L<Archive::Libarchive::Extract>
+
+An interface for extracting files from an archive.
+
+=item L<Archive::Libarchive>
+
+A lower-level interface to C<libarchive> which can be used to read/extract and create
+archives of various formats.
+
+=back
+
+=cut
