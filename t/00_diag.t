@@ -12,9 +12,11 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Archive::Libarchive
   ExtUtils::MakeMaker
+  File::chdir
   Path::Tiny
   Ref::Util
   Test2::V0
+  Test::Script
 );
 
 
